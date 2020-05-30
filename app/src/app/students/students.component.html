@@ -1,7 +1,8 @@
-<h2>{{student.name | uppercase}} Details</h2>
-<div><span>ID:</span> {{student.id}}</div>
-<div>
-    <label>Name:
-        <input [(ngModel)]="student.name" placeholder="name">
-    </label> 
-</div>
+<h2>Students</h2>
+<ul class="students">
+    <li *ngFor="let student of students">
+        <a routerLink="/students/{{student._id}}">
+            <span class="badge">{{student._id | slice:0:5}}</span> {{student.name}}
+        </a>
+    </li>
+</ul>
