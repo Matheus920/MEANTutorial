@@ -25,4 +25,17 @@ export class StudentsComponent implements OnInit {
    );
   }
 
+  add(name : string) : void {
+    name = name.trim();
+    if(!name) return;
+    this.studentService.addStudent({name} as Student).subscribe(
+      student => this.students.push(student)
+    );
+  }
+
+  delete(student : Student) : void {
+    this.students = this.students.filter(s => s._id !== student._id);
+    this.studentService.deleteStudent(student).subscribe();
+  }
+
 }

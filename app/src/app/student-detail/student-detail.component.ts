@@ -33,4 +33,9 @@ export class StudentDetailComponent implements OnInit {
     this.location.back();
   }
 
+  save() : void {
+    this.studentService.updateStudent(this.student)
+      .subscribe(() => this.goBack());
+  }
+
 }

@@ -12,7 +12,11 @@ import { catchError, map, tap } from 'rxjs/operators';
 })
 export class StudentService {
 
-  private studentsURL = api + 'api/students'
+  private studentsURL = api + 'api/students';
+  
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  };
 
   constructor(private messageService : MessageService,
     private httpClient : HttpClient) { }
@@ -24,12 +28,47 @@ export class StudentService {
     );
   };
 
+  addStudent(student : Student) : Observable<Student> {
+    return this.httpClient.post<Student>(this.studentsURL, student, this.httpOptions).pipe(
+      tap((newStudent : Student) => this.log(`added student id=${newStudent._id}`)),
+      catchError(this.handleError<Student>(`postStudent name = ${student.name}`))
+    );
+  }
+
+  deleteStudent(student : Student) : Observable<Student> {
+    const url : string = `${this.studentsURL}/${student._id}`;
+    return this.httpClient.delete<Student>(url, this.httpOptions).pipe(
+      tap(_ => this.log(`deleted student id = ${student._id}`)),
+      catchError(this.handleError<Student>(`delete student id = ${student._id}`)
+    ));
+  }
+
+  updateStudent(student : Student) : Observable<Student> {
+    const url : string = `${this.studentsURL}/${student._id}`;
+    return this.httpClient.patch<Student>(url, student, this.httpOptions).pipe(
+      tap(_ => this.log(`updated student id=${student._id}`),
+      catchError(this.handleError<Student>(`updateStudent id = ${student._id}`))
+    ));
+  }
+
   getStudent(id : string) : Observable<Student> {
     const url : string = `${this.studentsURL}/${id}`;
     return this.httpClient.get<Student>(url).pipe(
       tap(_ => this.log(`fetched student id=${id}`),
       catchError(this.handleError<Student>(`getStudent id = ${id}`))
     ));
+  }
+
+  searchStudent(term : string) : Observable<Student[]>{
+    if(!term.trim()){
+      return of([]);
+    }
+    const url : string = `${this.studentsURL}/search/${term}`;
+    return this.httpClient.get<Student[]>(url).pipe(
+      tap(x => x.length ? this.log(`found students matching ${term}`) :
+        this.log(`no students matching ${term}`)),
+      catchError(this.handleError<Student[]>('searchStudents', []))
+    )
   }
 
   private log(message: string) {

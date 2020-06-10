@@ -32,14 +32,28 @@ app.get('/api/students/:id', (req, res) => {
         if(err) res.send(err);
         res.json(student);
     })
-})
+});
 
-app.post('/api/students/send', (req, res) => {
+app.get('/api/students/search/:name', (req, res) => {
+    Student.find({name: {$regex: req.params.name, $options: 'i'}}, (err, students) => {
+        if(err) res.send(err);
+        res.json(students);
+    })
+});
+
+app.post('/api/students/', (req, res) => {
     var student = new Student();
     student.name = req.body.name;
     student.save((err) => {
         if(err) res.send(err);
-        res.json({message: 'Student successfully created!'});
+        res.json(student);
+    });
+});
+
+app.patch('/api/students/:id', (req, res) => {
+    Student.findByIdAndUpdate(req.params.id, {name: req.body.name}, (err, student) => {
+        if(err) res.send(err);
+        res.json(student);
     });
 });
 

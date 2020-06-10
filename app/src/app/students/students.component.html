@@ -4,5 +4,16 @@
         <a routerLink="/students/{{student._id}}">
             <span class="badge">{{student._id | slice:0:5}}</span> {{student.name}}
         </a>
+        <button class="delete" title="delete student" (click)="delete(student)">
+            x
+        </button>
     </li>
 </ul>
+<div>
+    <label>Student name:
+      <input #studentName />
+    </label>
+    <button (click)="add(studentName.value); studentName.value=''">
+      Add
+    </button>
+  </div>
